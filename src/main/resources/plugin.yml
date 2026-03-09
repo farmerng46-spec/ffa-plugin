@@ -1,4 +1,4 @@
-name: Tulip
+name: VigorFFA
 version: '${project.version}'
 main: me.emmy.tulip.Tulip
 author: Emmy
