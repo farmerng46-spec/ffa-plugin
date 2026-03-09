@@ -1,135 +1,106 @@
 package me.emmy.tulip.locale;
 
 import lombok.Getter;
-import me.emmy.tulip.config.ConfigService;
+import me.emmy.tulip.Tulip;
 import me.emmy.tulip.util.CC;
-import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * @author Emmy
- * @project FFA
- * @date 21/08/2024 - 20:19
- */
 @Getter
 public enum Locale {
-    NO_PERMISSION("no-permission", "locale.yml"),
+    NO_PERMISSION("no-permission"),
 
-    SPAWN_SET("spawn.set", "locale.yml"),
-    SPAWN_TELEPORTED("spawn.teleported", "locale.yml"),
+    SPAWN_SET("spawn.set"),
+    SPAWN_TELEPORTED("spawn.teleported"),
     
-    ARENA_ALREADY_EXISTS("arena.already-exists", "locale.yml"),
-    ARENA_DOES_NOT_EXIST("arena.does-not-exist", "locale.yml"),
-    ARENA_CREATED("arena.created", "locale.yml"),
-    ARENA_DELETED("arena.deleted", "locale.yml"),
-    ARENA_CENTER_SET("arena.center-set", "locale.yml"),
-    ARENA_SAFE_POS_SET("arena.safe-pos-set", "locale.yml"),
-    ARENA_SPAWN_SET("arena.spawn-set", "locale.yml"),
-    ARENA_CENTER_NOT_SET("arena.center-not-set", "locale.yml"),
+    ARENA_ALREADY_EXISTS("arena.already-exists"),
+    ARENA_DOES_NOT_EXIST("arena.does-not-exist"),
+    ARENA_CREATED("arena.created"),
+    ARENA_DELETED("arena.deleted"),
+    ARENA_CENTER_SET("arena.center-set"),
+    ARENA_SAFE_POS_SET("arena.safe-pos-set"),
+    ARENA_SPAWN_SET("arena.spawn-set"),
+    ARENA_CENTER_NOT_SET("arena.center-not-set"),
 
-    KIT_DEFAULT_DESCRIPTION("kit.default-description", "locale.yml"),
+    KIT_DEFAULT_DESCRIPTION("kit.default-description"),
+    KIT_ALREADY_EXISTS("kit.already-exists"),
+    KIT_DOES_NOT_EXIST("kit.does-not-exist"),
+    KIT_CREATED("kit.created"),
+    KIT_DELETED("kit.deleted"),
+    KIT_INVENTORY_GIVEN("kit.inventory-given"),
+    KIT_DESCRIPTION_SET("kit.description-set"),
+    KIT_ICON_SET("kit.icon-set"),
+    KIT_INVENTORY_SET("kit.inventory-set"),
+    KIT_TOGGLED("kit.toggled"),
+    KIT_DISABLED("kit.disabled"),
 
-    KIT_ALREADY_EXISTS("kit.already-exists", "locale.yml"),
-    KIT_DOES_NOT_EXIST("kit.does-not-exist", "locale.yml"),
-    KIT_CREATED("kit.created", "locale.yml"),
-    KIT_DELETED("kit.deleted", "locale.yml"),
-    KIT_INVENTORY_GIVEN("kit.inventory-given", "locale.yml"),
-    KIT_DESCRIPTION_SET("kit.description-set", "locale.yml"),
-    KIT_ICON_SET("kit.icon-set", "locale.yml"),
-    KIT_INVENTORY_SET("kit.inventory-set", "locale.yml"),
-    KIT_TOGGLED("kit.toggled", "locale.yml"),
-    KIT_DISABLED("kit.disabled", "locale.yml"),
+    FFA_MATCH_ALREADY_EXISTS("ffa-match.already-exists"),
+    FFA_MATCH_DOES_NOT_EXIST("ffa-match.does-not-exist"),
+    FFA_MATCH_CREATED("ffa-match.created"),
+    FFA_MATCH_DELETED("ffa-match.deleted"),
+    FFA_PLAYER_NOT_IN_MATCH("ffa-match.player-not-in-match"),
+    FFA_KICKED_PLAYER("ffa-match.kicked-player"),
+    FFA_KICKED("ffa-match.kicked"),
+    FFA_MAX_PLAYERS_SET("ffa-match.max-players-set"),
+    FFA_NOT_IN_MATCH("ffa-match.not-in-match"),
+    FFA_ALREADY_IN_MATCH("ffa-match.already-in-match"),
+    FFA_ENDERPEARL_COOLDOWN("ffa-match.enderpearl-cooldown"),
+    FFA_COOLDOWN_EXPIRED("ffa-match.cooldown-expired");
 
-    FFA_MATCH_ALREADY_EXISTS("ffa-match.already-exists", "locale.yml"),
-    FFA_MATCH_DOES_NOT_EXIST("ffa-match.does-not-exist", "locale.yml"),
-    FFA_MATCH_CREATED("ffa-match.created", "locale.yml"),
-    FFA_MATCH_DELETED("ffa-match.deleted", "locale.yml"),
-    FFA_PLAYER_NOT_IN_MATCH("ffa-match.player-not-in-match", "locale.yml"),
-    FFA_KICKED_PLAYER("ffa-match.kicked-player", "locale.yml"),
-    FFA_KICKED("ffa-match.kicked", "locale.yml"),
-    FFA_MAX_PLAYERS_SET("ffa-match.max-players-set", "locale.yml"),
-    FFA_NOT_IN_MATCH("ffa-match.not-in-match", "locale.yml"),
-    FFA_ALREADY_IN_MATCH("ffa-match.already-in-match", "locale.yml"),
-    FFA_ENDERPEARL_COOLDOWN("ffa-match.enderpearl-cooldown", "locale.yml"),
-    FFA_COOLDOWN_EXPIRED("ffa-match.cooldown-expired", "locale.yml"),
+    private final String path;
+    // Rimosso String config perché assumiamo che tutto sia in locale.yml per semplicità
+    // Se hai più file, possiamo rimetterlo, ma di solito i messaggi stanno in uno solo.
 
-    ;
-
-    private final String string;
-    private final String config;
-
-    /**
-     * Constructor for the locale
-     *
-     * @param string the string
-     * @param config the config
-     */
-    Locale(String string, String config) {
-        this.string = string;
-        this.config = config;
+    Locale(String path) {
+        this.path = path;
     }
 
     /**
-     * Get the string from the config file
-     *
-     * @return the string and the config
+     * Recupera la configurazione in modo sicuro
      */
-    public String getStringPath() {
-        return CC.translate(ConfigService.getInstance().getConfig(config).getString(string));
+    private FileConfiguration getConfig() {
+        return Tulip.getInstance().getConfigService().getLocaleConfig();
     }
 
     /**
-     * Get the string list from the config file
-     *
-     * @return the string list and the config
+     * Ritorna la stringa tradotta con supporto HEX (1.16+) e Legacy (&)
      */
-    public List<String> getStringListPath() {
-        return ConfigService.getInstance().getConfig(config).getStringList(string);
+    public String getString() {
+        String message = getConfig().getString(path);
+        if (message == null) return "§cMessage not found: " + path;
+        return CC.translate(message);
     }
 
     /**
-     * Get the boolean result from the config file
-     *
-     * @return the boolean and the config
+     * Ritorna una lista di stringhe tradotte
      */
-    public boolean getBooleanPath() {
-        return ConfigService.getInstance().getConfig(config).getBoolean(string);
+    public List<String> getStringList() {
+        return getConfig().getStringList(path).stream()
+                .map(CC::translate)
+                .collect(Collectors.toList());
+    }
+
+    public boolean getBoolean() {
+        return getConfig().getBoolean(path);
+    }
+
+    public int getInt() {
+        return getConfig().getInt(path);
     }
 
     /**
-     * Get the integer value from the config file
-     *
-     * @return the integer and the config
+     * Formatta il messaggio sostituendo i placeholder
+     * Esempio: Locale.ARENA_CREATED.format("<arena>", "Desert")
      */
-    public int getIntPath() {
-        return ConfigService.getInstance().getConfig(config).getInt(string);
-    }
-
-    /**
-     * Get the double value from the config file
-     *
-     * @return the double and the config
-     */
-    public double getDoublePath() {
-        return ConfigService.getInstance().getConfig(config).getDouble(string);
-    }
-
-    /**
-     * Get the long value from the config file
-     *
-     * @return the long and the config
-     */
-    public long getLongPath() {
-        return ConfigService.getInstance().getConfig(config).getLong(string);
-    }
-
-    /**
-     * Get the ChatColor value from the config file
-     *
-     * @return the color and the config
-     */
-    public ChatColor getColorPath() {
-        return ChatColor.valueOf(String.valueOf(ConfigService.getInstance().getConfig(config).getColor(string)));
+    public String format(Object... replacements) {
+        String message = getString();
+        for (int i = 0; i < replacements.length; i += 2) {
+            if (i + 1 < replacements.length) {
+                message = message.replace(replacements[i].toString(), replacements[i+1].toString());
+            }
+        }
+        return message;
     }
 }
