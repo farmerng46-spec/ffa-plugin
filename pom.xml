@@ -6,126 +6,127 @@
 
     <groupId>me.emmy</groupId>
     <artifactId>Tulip</artifactId>
-    <version>1.2</version>
+    <version>1.2-CROSS</version>
     <packaging>jar</packaging>
     <name>Tulip</name>
-    <description>A custom Free For All plugin</description>
 
     <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version> <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <adventure.version>4.17.0</adventure.version>
     </properties>
 
-   <build>
-       <finalName>${project.name}-${project.version}</finalName>
-       <defaultGoal>clean install</defaultGoal>
-    <plugins>
-       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
-       </plugin>
-       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.4</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
-       </plugin>
-    </plugins>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-  </build>
+    <build>
+        <finalName>${project.name}-${project.version}</finalName>
+        <defaultGoal>clean install</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <release>${java.version}</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <shadedPattern>me.emmy.tulip.libs.xseries</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.mongodb</pattern>
+                                    <shadedPattern>me.emmy.tulip.libs.mongodb</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.reflections</pattern>
+                                    <shadedPattern>me.emmy.tulip.libs.reflections</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 
-  <repositories>
-      <repository>
-          <id>spigotmc-repo</id>
-          <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-      </repository>
-      <repository>
-          <id>placeholderapi</id>
-          <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-      </repository>
-      <repository>
-          <id>sonatype</id>
-          <url>https://oss.sonatype.org/content/groups/public/</url>
-      </repository>
-  </repositories>
+    <repositories>
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
-  <dependencies>
-        <!-- Spigot API -->
-      <dependency>
-          <groupId>org.spigotmc</groupId>
-          <artifactId>spigot-api</artifactId>
-          <version>1.8.8-R0.1-SNAPSHOT</version>
-          <scope>provided</scope>
-      </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.20.1-R0.1-SNAPSHOT</version> 
+            <scope>provided</scope>
+        </dependency>
 
-      <!-- PlaceholderAPI -->
-      <dependency>
-          <groupId>me.clip</groupId>
-          <artifactId>placeholderapi</artifactId>
-          <version>2.11.5</version>
-          <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>xseries</artifactId>
+            <version>11.2.1</version>
+        </dependency>
 
-      <!-- lombok -->
-      <dependency>
-          <groupId>org.projectlombok</groupId>
-          <artifactId>lombok</artifactId>
-          <version>1.18.12</version>
-          <scope>provided</scope>
-      </dependency>
-      
-      <!-- reflections -->
-      <dependency>
-          <groupId>org.reflections</groupId>
-          <artifactId>reflections</artifactId>
-          <version>0.10.2</version>
-      </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bukkit</artifactId>
+            <version>4.3.3</version>
+        </dependency>
 
-      <!-- commons-lang3 -->
-      <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
-          <version>3.14.0</version>
-      </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>4.11.1</version>
+        </dependency>
 
-      <!-- mongoDB -->
-      <dependency>
-          <groupId>org.mongodb</groupId>
-          <artifactId>mongodb-driver-sync</artifactId>
-          <version>4.11.1</version>
-      </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.5</version>
+            <scope>provided</scope>
+        </dependency>
 
-      <!-- mongoDB -->
-      <dependency>
-          <groupId>org.mongodb</groupId>
-          <artifactId>mongo-java-driver</artifactId>
-          <version>3.9.0</version>
-      </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
 
-      <!-- CraftBukkit v1_8_R3 -->
-      <dependency>
-          <groupId>org.bukkit</groupId>
-          <artifactId>craftbukkit</artifactId>
-          <version>1.8.8-R0.1-SNAPSHOT</version>
-          <scope>system</scope>
-          <systemPath>${project.basedir}/lib/CraftBukkit-v1_8_R3.jar</systemPath>
-      </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
+        </dependency>
+    </dependencies>
 </project>
